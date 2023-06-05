@@ -1,52 +1,38 @@
+import React, { useEffect, useState } from "react";
 
-import './App.css';
-import {useState} from "react";
-
-const Person =(props)=>{
-    return (
-      <>
-          <h1>First Name : {props.fname}</h1>
-          <h2>Last Name : {props.lname}</h2>
-          <h2>Age : {props.age}</h2>
-      </>
-    );
-}
-
+const API_URL = 'https://www.omdbapi.com?apikey=bb968a5d';
 
 const App = () => {
-    const [counter , setcounter] =useState(0);
-    const [Colour ,setColour] = useState('');
+    const [movies, setMovies] = useState([]);
 
+    const searchMovies = async (title) => {
+        const response = await fetch(`${API_URL}&s=${title}`);
+        const data = await response.json();
 
-  return (
-      <di className='App'>
+        if (data.Response === "True") {
+            setMovies(data.Search);
+        } else {
+            setMovies([]);
+        }
+    };
 
-          <h1>
-            <Person
-                fname={'john'}
-                lname={'cina'}
-                age={36}
-            />
+    useEffect(() => {
+        searchMovies('hello');
+    }, []);
 
+    return (
+        <div>
+            <h1>APP</h1>
+            {movies.map((movie) => (
+                <div key={movie.imdbID}>
+                    <h2>{movie.Title}</h2>
+                    <p>Year: {movie.Year}</p>
+                    <p>Type: {movie.Type}</p>
+                    <img src={movie.Poster} alt={movie.Title} />
+                </div>
+            ))}
+        </div>
+    );
+};
 
-          <di>
-              <h1>Counter</h1>
-              <button onClick={()=>{setcounter((prevCount)=>prevCount + 5)}}>+</button>
-              <h1>{counter}</h1>
-              <button onClick={() => { setcounter((prevCount) => prevCount -5)}}>-</button>
-          </di>
-          <di>
-              <h1>My Favorite colour Is {Colour}</h1>
-              <button onClick={()=>setColour('Green')}>Green</button>
-              <button onClick={()=>setColour('Blue')}>Blue</button>
-              <button onClick={()=>setColour('Red')}>Red</button>
-              <button onClick={()=>setColour('Pink')}>Pink</button>
-
-          </di>
-          </h1>
-      </di>
-
-  );
-}
-
-export default App ;
+export default App;
